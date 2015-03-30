@@ -7,14 +7,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 public class EU4You extends ListActivity {
-    static private ArrayList<Country> EU=new ArrayList<Country>();
+    static private ArrayList<Country> EU=new ArrayList<>();
+    private WebView browser=null;
 
     static {
         EU.add(new Country(R.string.austria, R.drawable.austria,
@@ -79,14 +83,26 @@ public class EU4You extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        browser=(WebView)findViewById(R.id.browser);
+
         setListAdapter(new CountryAdapter());
     }
 
     @Override
     protected void onListItemClick(ListView l, View v,
                                    int position, long id) {
-        startActivity(new Intent(Intent.ACTION_VIEW,
-                Uri.parse(getString(EU.get(position).url))));
+        String url=getString(EU.get(position).url);
+
+        if (browser==null) {
+            Toast.makeText(getApplicationContext(), "Nemam vlastny browser", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(url)));
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Mam vlastny browser", Toast.LENGTH_SHORT).show();
+            browser.loadUrl(url);
+        }
     }
 
     static class Country {
